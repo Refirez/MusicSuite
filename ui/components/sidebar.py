@@ -3,7 +3,7 @@ import customtkinter as ctk
 
 class Sidebar(ctk.CTkFrame):
 
-    def __init__(self, master):
+    def __init__(self, master, navigate_callback):
         super().__init__(
             master,
             width=220,
@@ -11,6 +11,8 @@ class Sidebar(ctk.CTkFrame):
         )
 
         self.pack_propagate(False)
+
+        self.navigate_callback = navigate_callback
 
         titulo = ctk.CTkLabel(
             self,
@@ -20,23 +22,32 @@ class Sidebar(ctk.CTkFrame):
 
         titulo.pack(pady=(30, 40))
 
-        botoes = [
-            "🏠 Home",
-            "⬇ Downloader",
-            "✂ Splitter",
-            "📁 Biblioteca",
-            "⚙ Configurações"
+        self.buttons = {}
+
+        menu_items = [
+            ("🏠 Home", "home"),
+            ("⬇ Downloader", "downloader"),
+            ("✂ Splitter", "splitter"),
+            ("📁 Biblioteca", "library"),
+            ("⚙ Configurações", "settings")
         ]
 
-        for texto in botoes:
+        for text, page in menu_items:
 
-            botao = ctk.CTkButton(
+            button = ctk.CTkButton(
                 self,
-                text=texto,
+                text=text,
                 width=180,
                 height=42,
                 anchor="w",
-                corner_radius=10
+                corner_radius=10,
+                command=lambda p=page: self.navigate(p)
             )
 
-            botao.pack(pady=6)
+            button.pack(pady=6)
+
+            self.buttons[page] = button
+
+    def navigate(self, page):
+
+        self.navigate_callback(page)

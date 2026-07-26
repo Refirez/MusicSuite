@@ -3,6 +3,7 @@ import customtkinter as ctk
 from ui.components.sidebar import Sidebar
 from ui.pages.home import HomePage
 from ui.pages.downloader import DownloaderPage
+from ui.pages.splitter import SplitterPage
 
 
 class MusicSuite(ctk.CTk):
@@ -29,6 +30,7 @@ class MusicSuite(ctk.CTk):
 
         self.pages["home"] = HomePage(self.content)
         self.pages["downloader"] = DownloaderPage(self.content)
+        self.pages["splitter"] = SplitterPage(self.content)
 
         for page in self.pages.values():
             page.place(

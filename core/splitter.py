@@ -61,7 +61,7 @@ def split_audio(
     destination: str | Path,
     chapters: list[Chapter],
     audio_format: str = "mp3",
-    bitrate: str = "192k",
+    bitrate: str = "320k",
     progress_callback=None,
 ) -> list[Path]:
     """Create one re-encoded audio file per chapter; FFmpeg must be installed."""

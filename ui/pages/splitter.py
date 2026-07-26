@@ -19,8 +19,15 @@ class SplitterPage(ctk.CTkFrame):
         self.chapters_text = ctk.CTkTextbox(self, height=190)
         self.chapters_text.pack(fill="both", expand=True, padx=50)
         self.chapters_text.insert("1.0", "00:00 Abertura\n04:32 Nome da música\n08:15 Próxima música")
+        options = ctk.CTkFrame(self, fg_color="transparent")
+        options.pack(fill="x", padx=50, pady=(12, 0))
         self.format_var = ctk.StringVar(value="mp3")
-        ctk.CTkOptionMenu(self, values=["mp3", "wav"], variable=self.format_var, width=110).pack(anchor="w", padx=50, pady=(12, 0))
+        ctk.CTkLabel(options, text="Formato").grid(row=0, column=0, sticky="w")
+        ctk.CTkOptionMenu(options, values=["mp3", "wav"], variable=self.format_var, width=110).grid(row=1, column=0, pady=(4, 0), sticky="w")
+        ctk.CTkLabel(options, text="Qualidade MP3").grid(row=0, column=1, padx=(24, 0), sticky="w")
+        self.quality = ctk.CTkOptionMenu(options, values=["320 kbps", "256 kbps", "192 kbps", "128 kbps"], width=120)
+        self.quality.set("320 kbps")
+        self.quality.grid(row=1, column=1, padx=(24, 0), pady=(4, 0), sticky="w")
         self.button = ctk.CTkButton(self, text="Separar faixas", height=45, font=("Segoe UI", 16, "bold"), command=self.start)
         self.button.pack(fill="x", padx=50, pady=12)
         self.progress = ctk.CTkProgressBar(self)
@@ -62,11 +69,15 @@ class SplitterPage(ctk.CTkFrame):
         self.button.configure(state="disabled")
         self.progress.set(0)
         self.status.configure(text=f"Separando {len(chapters)} faixas...")
-        threading.Thread(target=self._split_worker, args=(chapters,), daemon=True).start()
+        bitrate = f"{self.quality.get().split()[0]}k"
+        threading.Thread(target=self._split_worker, args=(chapters, bitrate), daemon=True).start()
 
-    def _split_worker(self, chapters):
+    def _split_worker(self, chapters, bitrate):
         try:
-            files = split_audio(self.source, self.destination, chapters, self.format_var.get(), progress_callback=self._progress)
+            files = split_audio(
+                self.source, self.destination, chapters, self.format_var.get(), bitrate,
+                progress_callback=self._progress,
+            )
             self.after(0, lambda: self.status.configure(text=f"Concluído: {len(files)} faixas criadas."))
         except Exception as error:
             self.after(0, lambda: messagebox.showerror("Não foi possível separar", str(error)))

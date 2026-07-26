@@ -1,39 +1,10 @@
-from yt_dlp import YoutubeDL
+from core.youtube_client import YouTubeManager
 
 
-class YouTubeService:
+class YoutubeService:
 
-    @staticmethod
-    def get_info(url: str):
+    def __init__(self):
+        self.youtube = YouTubeManager()
 
-        options = {
-
-            "quiet": True,
-
-            "skip_download": True,
-
-            "extract_flat": False,
-
-            "noplaylist": True
-
-        }
-
-        with YoutubeDL(options) as ydl:
-
-            info = ydl.extract_info(url, download=False)
-
-            return {
-
-                "title": info.get("title"),
-
-                "channel": info.get("uploader"),
-
-                "duration": info.get("duration"),
-
-                "thumbnail": info.get("thumbnail"),
-
-                "views": info.get("view_count"),
-
-                "upload_date": info.get("upload_date")
-
-            }
+    def get_video_info(self, url: str):
+        return self.youtube.get_info(url)
